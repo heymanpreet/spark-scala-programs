@@ -1,0 +1,27 @@
+// calculate the total number of goals scored by each team during five seasons.
+
+// Calc All Goals for Home Team Matches
+// First Reading the data using sc.textFile Method
+// Splitting the CSV file data "," seperator
+// Filtering the Home Team Name and Goals during each season
+// Using reduceByKey operation to sum all the Home Team goals
+val inputGoalsHomeTeamAllSeasons = sc.textFile("/home/ubuntu/goals/season-1415_csv.csv,/home/ubuntu/goals/season-1516_csv.csv,/home/ubuntu/goals/season-1617_csv.csv,/home/ubuntu/goals/season-1718_csv.csv,/home/ubuntu/goals/season-1819_csv.csv")
+                                    .map(x => x.split(","))
+                                    .map(x => if (x(2)!= "HomeTeam") (x(2),x(4).toInt) else ("",0))
+                                    .reduceByKey(_+_)
+
+// Calc All Goals for Away Team Matches
+// First Reading the data using sc.textFile Method
+// Splitting the CSV file data "," seperator
+// Filtering the Away Team Name and Goals during each season
+// Using reduceByKey operation to sum all the Away Team goals
+val inputGoalsAwayTeamAllSeasons = sc.textFile("/home/ubuntu/goals/season-1415_csv.csv,/home/ubuntu/goals/season-1516_csv.csv,/home/ubuntu/goals/season-1617_csv.csv,/home/ubuntu/goals/season-1718_csv.csv,/home/ubuntu/goals/season-1819_csv.csv")
+                                    .map(x => x.split(","))
+                                    .map(x => if (x(3)!= "AwayTeam") (x(3),x(5).toInt) else ("",0))
+                                    .reduceByKey(_+_)
+
+// Combining Goals for Home Team Array and Away Team Array
+val inputGoalsAllSeason = inputGoalsHomeTeamAllSeasons ++ inputGoalsAwayTeamAllSeasons;
+
+// Reducing the values tp calculate final result
+inputGoalsAllSeason.reduceByKey(_+_).collect
